@@ -21,6 +21,7 @@ class App extends Component<AppProps, AppState> {
 
   async componentDidMount() {
     const movies = await ajaxTools.fetchInitialMovies();
+    console.log({movies});//TODO: Remove.
     this.setState({
         movies,
       });
@@ -31,7 +32,7 @@ class App extends Component<AppProps, AppState> {
       <SafeAreaView style={styles.container}>
         {
           this.state.movies.length > 0 ? (
-            <MovieList />
+            <MovieList movies={this.state.movies} />
           ) : (
             <Text style={styles.header}>No movies!</Text>
           )
