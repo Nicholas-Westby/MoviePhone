@@ -12,12 +12,13 @@ interface MovieItemState {
 
 class MovieItem extends Component<MovieItemProps, MovieItemState> {
   render() {
+    const {movie} = this.props;
     return (
       <View style={styles.container}>
         <Image source={posterImage} style={styles.poster} />
         <Text>
-          {this.props.movie.title + ' '}
-          ({this.props.movie.releaseYear})
+          {movie.title + ' '}
+          ({movie.releaseYear})
         </Text>
       </View>
     );
