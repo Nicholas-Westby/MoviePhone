@@ -1,5 +1,5 @@
 import React, {Component, ReactNode} from "react";
-import {SafeAreaView, Text, StyleSheet} from "react-native";
+import {SafeAreaView, Text, StyleSheet, Animated, View, Easing, Dimensions} from "react-native";
 import ajaxTools from '../ajax';
 import MovieList from "./MovieList.tsx";
 import MovieDetail from "./MovieDetail.tsx";
@@ -14,6 +14,7 @@ interface AppState {
 }
 
 class App extends Component<AppProps, AppState> {
+  titleOffset = new Animated.Value(0);
   constructor(props: AppProps) {
     super(props);
     this.state = {
@@ -34,11 +35,33 @@ class App extends Component<AppProps, AppState> {
   };
 
   async componentDidMount() {
-    const movies = await ajaxTools.fetchInitialMovies();
-    this.setState({
+    this.animateTitle();
+    setTimeout(async () => {
+      const movies = await ajaxTools.fetchInitialMovies();
+      this.setState({
         movies,
       });
+    }, 5000);//TODO: Timeout for testing (remove later).
   }
+
+  animateTitle = (dir: number = 1) => {
+    const windowHeight = Dimensions.get('window').height;
+    const offset = windowHeight / 80;
+    Animated.timing(
+        this.titleOffset,
+        {
+          useNativeDriver: false,
+          toValue: offset * dir,
+          duration: 400,
+          easing: Easing.linear,
+        })
+      .start(({finished}) => {
+        if (!finished) {
+          return;
+        }
+        this.animateTitle(-1 * dir)
+      });
+  };
 
   render(): ReactNode {
     if (this.state.currentMovieId) {
@@ -52,8 +75,15 @@ class App extends Component<AppProps, AppState> {
       );
     }
     return (
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>No movies!</Text>
+      <SafeAreaView style={styles.welcome}>
+        <Animated.View style={{top: this.titleOffset}}>
+          <Text style={styles.header}>Welcome to
+            {' '}
+            <View>
+              <Text style={[styles.header, styles.emphasizedHeader]}>Movie Phone</Text>
+            </View>
+          !</Text>
+        </Animated.View>
       </SafeAreaView>
     );
   }
@@ -71,11 +101,15 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 40,
+    textAlign: 'center',
+  },
+  emphasizedHeader: {
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+  },
+  welcome: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    borderStyle: 'solid',
-    borderWidth: 1,
   },
 });
 
