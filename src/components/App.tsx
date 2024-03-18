@@ -2,6 +2,7 @@ import React, {Component, ReactNode} from "react";
 import {SafeAreaView, Text, StyleSheet} from "react-native";
 import ajaxTools from '../ajax';
 import MovieList from "./MovieList.tsx";
+import MovieDetail from "./MovieDetail.tsx";
 
 interface AppProps {
 
@@ -9,37 +10,57 @@ interface AppProps {
 
 interface AppState {
   movies: [];
+  currentMovieId?: number,
 }
 
 class App extends Component<AppProps, AppState> {
-  constructor(props) {
+  constructor(props: AppProps) {
     super(props);
     this.state = {
       movies: [],
     };
   }
 
+  setCurrentMovie = (movieId: number) => {
+    this.setState({
+      currentMovieId: movieId,
+    });
+  };
+
+  unsetCurrentMovie = () => {
+    this.setState({
+      currentMovieId: undefined,
+    });
+  };
+
   async componentDidMount() {
     const movies = await ajaxTools.fetchInitialMovies();
-    console.log({movies});//TODO: Remove.
     this.setState({
         movies,
       });
   }
 
   render(): ReactNode {
+    if (this.state.currentMovieId) {
+      return <MovieDetail onBack={this.unsetCurrentMovie} movie={this.currentMovie()} />;
+    }
+    if (this.state.movies.length > 0) {
+      return (
+        <SafeAreaView style={styles.container}>
+          <MovieList movies={this.state.movies} onItemPress={this.setCurrentMovie} />
+        </SafeAreaView>
+      );
+    }
     return (
       <SafeAreaView style={styles.container}>
-        {
-          this.state.movies.length > 0 ? (
-            <MovieList movies={this.state.movies} />
-          ) : (
-            <Text style={styles.header}>No movies!</Text>
-          )
-        }
+        <Text style={styles.header}>No movies!</Text>
       </SafeAreaView>
     );
   }
+
+  currentMovie = () => {
+    return this.state.movies.find(x => x.id === this.state.currentMovieId);
+  };
 }
 
 const styles = StyleSheet.create({
