@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {StyleSheet, Text, View, Image, SafeAreaView, Button, Linking} from "react-native";
+import {StyleSheet, Text, View, Image, SafeAreaView, Button, Linking, ScrollView} from "react-native";
 import ajaxTools from "../ajax.tsx";
 
 interface MovieDetailProps {
@@ -44,7 +44,8 @@ class MovieDetail extends Component<MovieDetailProps, MovieDetailState> {
     const {movie} = this.state;
     const image = this.getImage();
     return (
-      <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <SafeAreaView style={styles.container}>
         {image && <Image source={image} style={styles.poster} /> }
         <Text>
           {movie.title}
@@ -55,7 +56,8 @@ class MovieDetail extends Component<MovieDetailProps, MovieDetailState> {
           <Button title={"Open Movie"} onPress={this.openMovie}></Button>
           <Button title={"Back"} onPress={this.backToList}></Button>
         </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      </ScrollView>
     );
   }
 }
