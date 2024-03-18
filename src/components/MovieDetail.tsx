@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {StyleSheet, Text, View, Image, SafeAreaView, Button} from "react-native";
+import {StyleSheet, Text, View, Image, SafeAreaView, Button, Linking} from "react-native";
 import ajaxTools from "../ajax.tsx";
 
 interface MovieDetailProps {
@@ -36,6 +36,10 @@ class MovieDetail extends Component<MovieDetailProps, MovieDetailState> {
     this.props.onBack();
   };
 
+  openMovie = () => {
+    Linking.openURL(this.state.movie.url);
+  };
+
   render() {
     const {movie} = this.state;
     const image = this.getImage();
@@ -48,6 +52,7 @@ class MovieDetail extends Component<MovieDetailProps, MovieDetailState> {
           ({movie.releaseYear})
         </Text>
         <View style={styles.buttonContainer}>
+          <Button title={"Open Movie"} onPress={this.openMovie}></Button>
           <Button title={"Back"} onPress={this.backToList}></Button>
         </View>
       </SafeAreaView>
@@ -58,7 +63,7 @@ class MovieDetail extends Component<MovieDetailProps, MovieDetailState> {
 const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   container: {
     flex: 1,

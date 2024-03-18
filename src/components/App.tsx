@@ -59,7 +59,7 @@ class App extends Component<AppProps, AppState> {
         if (!finished) {
           return;
         }
-        this.animateTitle(-1 * dir)
+        this.animateTitle(-1 * dir);
       });
   };
 
